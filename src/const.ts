@@ -6,12 +6,10 @@ export const DEFAULT_TEXT = "\n" +
     "███████║██║░░╚═╝░░░██║░░░██║╚██╗░██╔╝███████║░░░██║░░░█████╗░░\n" +
     "██╔══██║██║░░██╗░░░██║░░░██║░╚████╔╝░██╔══██║░░░██║░░░██╔══╝░░\n" +
     "██║░░██║╚█████╔╝░░░██║░░░██║░░╚██╔╝░░██║░░██║░░░██║░░░███████╗\n" +
-    "╚═╝░░╚═╝░╚════╝░░░░╚═╝░░░╚═╝░░░╚═╝░░░╚═╝░░╚═╝░░░╚═╝░░░╚══════╝\n" +
-    "https://github.com/blckclov3r \n" +
-    "blckclov3r@gmail.com \n";
+    "╚═╝░░╚═╝░╚════╝░░░░╚═╝░░░╚═╝░░░╚═╝░░░╚═╝░░╚═╝░░░╚═╝░░░╚══════╝\n";
 
 export const SMALL_SQUARE = 1;
-export const MOUSE_MOVEMENT_SPEED = 10;
+export const MOUSE_MOVEMENT_SPEED = 28;
 export const MOUSE_CHECK_INTERVAL = 60000;
 
 export const CONSOLE_COLOR = [

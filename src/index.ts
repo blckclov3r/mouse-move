@@ -15,6 +15,7 @@ const startMovement = async (props: StartMovementProps) => {
 
     const startTime = formatTime(new Date());
     const startDate = formatDate(new Date());
+
     let previousMouseX = 0;
     let previousMouseY = 0;
     let isStarted = false;
@@ -28,21 +29,18 @@ const startMovement = async (props: StartMovementProps) => {
             logError(`Error initializing mouse position: ${error}`);
         }
     };
-
     await initializePosition();
 
     const checkMousePosition = async () => {
         try {
             const position = await mouse.getPosition();
             if (previousMouseX === position.x && previousMouseY === position.y && isStarted) {
-                // If no movement detected, reset idle timer
                 await drawSquare({
                     size: props.size,
                     mouseMovementSpeed: props.mouseMovementSpeed,
                 });
                 await getUrlPing(props.pingUrl);
             } else {
-                // Update the previous position
                 isStarted = true;
                 await initializePosition();
             }
@@ -54,8 +52,11 @@ const startMovement = async (props: StartMovementProps) => {
     setInterval(checkMousePosition, props.mouseCheckInterval);
 
     console.log(getUniqueColor()(DEFAULT_TEXT));
-    console.log(getUniqueColor()(`\nStart Date: ${startDate}`));
+    console.log(getUniqueColor()(`Start Date: ${startDate}`));
     console.log(getUniqueColor()(`Start Time: ${startTime}`));
+    console.log(getUniqueColor()(`linkedIn: @blckclov3r`));
+    console.log(getUniqueColor()(`github: @blckclov3r`));
+
     await getUrlPing(props.pingUrl);
 };
 

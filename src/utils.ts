@@ -59,11 +59,11 @@ const utils = () => {
         return CONSOLE_COLOR[Math.floor(Math.random() * CONSOLE_COLOR.length)];
     };
 
-    const getUrlPing = async (ping_url = PING_URL) => {
+    const getUrlPing = async (ping_url = PING_URL, isLog = true) => {
         const randomUrl = ping_url[Math.floor(Math.random() * ping_url.length)];
         try {
             const result = await ping.promise.probe(randomUrl);
-            if (result.alive) {
+            if (result.alive && isLog) {
                 console.log(getUniqueColor()(`\nPing to ${randomUrl} successful: ${result.time} ms`));
             } else {
                 logError(`\nPing to ${randomUrl} failed.`);
