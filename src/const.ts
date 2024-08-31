@@ -7,7 +7,8 @@ export const DEFAULT_TEXT = "\n" +
     "██╔══██║██║░░██╗░░░██║░░░██║░╚████╔╝░██╔══██║░░░██║░░░██╔══╝░░\n" +
     "██║░░██║╚█████╔╝░░░██║░░░██║░░╚██╔╝░░██║░░██║░░░██║░░░███████╗\n" +
     "╚═╝░░╚═╝░╚════╝░░░░╚═╝░░░╚═╝░░░╚═╝░░░╚═╝░░╚═╝░░░╚═╝░░░╚══════╝\n" +
-    "https://facebook.com/blckclov3r "
+    "🌐 https://github.com/blckclov3r \n" +
+    "✉️ blckclov3r@gmail.com \n";
 
 export const SMALL_SQUARE = 1;
 export const MOUSE_MOVEMENT_SPEED = 10;
