@@ -12,7 +12,6 @@ export const SMALL_SQUARE = 1;
 export const MOUSE_MOVEMENT_SPEED = 10;
 export const MOUSE_CHECK_INTERVAL = 60000;
 
-// Define a set of colors for console logging
 export const CONSOLE_COLOR = [
     kleur.grey,
     kleur.green,

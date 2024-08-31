@@ -43,9 +43,9 @@ educational purposes.
 
 Pre-built executable files are available for different platforms:
 
-- **Linux**: `app-linux`
-- **macOS**: `app-macos`
-- **Windows**: `app-win.exe`
+- **[Linux](https://raw.githubusercontent.com/blckclov3r/mouse-move/master/app-linux)**
+- **[macOS](https://raw.githubusercontent.com/blckclov3r/mouse-move/master/app-macos)**
+- **[Windows](https://raw.githubusercontent.com/blckclov3r/mouse-move/master/app-win.exe)**
 
 These files allow you to run the application directly on your platform without needing to build it yourself.
 

@@ -19,7 +19,6 @@ const startMovement = async (props: StartMovementProps) => {
     let previousMouseY = 0;
     let isStarted = false;
 
-    // Initialize mouse position
     const initializePosition = async () => {
         try {
             const position = await mouse.getPosition();
@@ -32,7 +31,6 @@ const startMovement = async (props: StartMovementProps) => {
 
     await initializePosition();
 
-    // Check mouse position and perform actions if idle
     const checkMousePosition = async () => {
         try {
             const position = await mouse.getPosition();
@@ -53,17 +51,14 @@ const startMovement = async (props: StartMovementProps) => {
         }
     };
 
-    // Set interval for checking mouse position
     setInterval(checkMousePosition, props.mouseCheckInterval);
 
-    // Log start information
     console.log(getUniqueColor()(DEFAULT_TEXT));
     console.log(getUniqueColor()(`\nStart Date: ${startDate}`));
     console.log(getUniqueColor()(`Start Time: ${startTime}`));
     await getUrlPing(props.pingUrl);
 };
 
-// Initiate the movement and logging
 startMovement({
     size: SMALL_SQUARE,
     pingUrl: PING_URL,

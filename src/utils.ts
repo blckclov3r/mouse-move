@@ -5,12 +5,10 @@ import ping from 'ping';
 import {DrawSquareProps} from "./types";
 
 const utils = () => {
-    // Utility function to log errors
     const logError = (message: string): void => {
         console.error(kleur.red(message));
     };
 
-    // Utility function to get the current mouse position
     const getMousePosition = async (): Promise<Point> => {
         try {
             return await mouse.getPosition();
@@ -20,7 +18,6 @@ const utils = () => {
         }
     };
 
-    // Utility function to draw a square at the current mouse position
     const drawSquare = async (props: DrawSquareProps): Promise<void> => {
         try {
             const {x: startX, y: startY} = await getMousePosition();
@@ -29,7 +26,7 @@ const utils = () => {
                 new Point(startX + props.size, startY),
                 new Point(startX + props.size, startY + props.size),
                 new Point(startX, startY + props.size),
-                new Point(startX, startY) // Close the square
+                new Point(startX, startY)
             ];
 
             for (const point of squarePoints) {
@@ -41,17 +38,15 @@ const utils = () => {
         }
     };
 
-    // Utility function to format a Date object to a 12-hour time string
     const formatTime = (date: Date): string => {
         const hours = date.getHours();
         const minutes = date.getMinutes().toString().padStart(2, '0');
         const seconds = date.getSeconds().toString().padStart(2, '0');
         const meridian = hours >= 12 ? 'PM' : 'AM';
-        const formattedHours = hours % 12 || 12; // Convert to 12-hour format
+        const formattedHours = hours % 12 || 12;
         return `${formattedHours}:${minutes}:${seconds} ${meridian}`;
     };
 
-    // Utility function to format the current date
     const formatDate = (date: Date): string => {
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
