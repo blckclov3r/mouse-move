@@ -5,9 +5,8 @@
   "scripts": {
     "build": "tsc",
     "pkg": "npx pkg dist/index.js --targets node18-linux-x64,node18-win-x64,node18-macos-x64 --output app",
-    "build:pkg": "npm run build && npm run pkg",
     "start": "npm run build && node dist/index.js",
-    "prepare": "npm run build:pkg",
+    "prepare": "npm run start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
