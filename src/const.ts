@@ -6,7 +6,8 @@ export const DEFAULT_TEXT = "\n" +
     "███████║██║░░╚═╝░░░██║░░░██║╚██╗░██╔╝███████║░░░██║░░░█████╗░░\n" +
     "██╔══██║██║░░██╗░░░██║░░░██║░╚████╔╝░██╔══██║░░░██║░░░██╔══╝░░\n" +
     "██║░░██║╚█████╔╝░░░██║░░░██║░░╚██╔╝░░██║░░██║░░░██║░░░███████╗\n" +
-    "╚═╝░░╚═╝░╚════╝░░░░╚═╝░░░╚═╝░░░╚═╝░░░╚═╝░░╚═╝░░░╚═╝░░░╚══════╝"
+    "╚═╝░░╚═╝░╚════╝░░░░╚═╝░░░╚═╝░░░╚═╝░░░╚═╝░░╚═╝░░░╚═╝░░░╚══════╝\n" +
+    "https://facebook.com/blckclov3r "
 
 export const SMALL_SQUARE = 1;
 export const MOUSE_MOVEMENT_SPEED = 10;
@@ -21,4 +22,4 @@ export const CONSOLE_COLOR = [
     kleur.magenta,
 ];
 
-export const PING_URL = ['microsoft.com', 'google.com', 'bing.com', 'stackoverflow.com', 'yahoo.com', 'wikipedia.org', 'mozilla.org'];
+export const PING_URL = ['microsoft.com', 'google.com', 'bing.com', 'stackoverflow.com', 'yahoo.com', 'wikipedia.org', 'mozilla.org', 'outlook.com', 'office.com', 'azure.com'];

@@ -35,9 +35,6 @@ educational purposes.
 - **`npm start`**: Builds the TypeScript files and runs the application.
 - **`npm run build`**: Compiles TypeScript files into JavaScript.
 - **`npm run pkg`**: Packages the application for different platforms (Linux, macOS, Windows).
-- **`npm run build:pkg`**: Runs both `build` and `pkg` scripts sequentially.
-- **`npm run prepare`**: Runs the `build:pkg` script to prepare the application for distribution.
-- **`npm test`**: Placeholder for running tests (currently not implemented).
 
 ## Executables
 
