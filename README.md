@@ -8,7 +8,6 @@ educational purposes.
 
 - **Mouse Control**: Moves the mouse and draws a square on the screen every minute.
 - **Network Monitoring**: Performs periodic network ping checks.
-- **Dynamic Logging**: Logs start time, current time, and system information with unique colors.
 
 ## Prerequisites
 
