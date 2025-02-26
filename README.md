@@ -31,7 +31,7 @@ educational purposes.
 
 ## Scripts
 
-- **`npm start`**: Builds the TypeScript files and runs the application.
+- **`npm run start`**: Builds the TypeScript files and runs the application.
 - **`npm run build`**: Compiles TypeScript files into JavaScript.
 - **`npm run pkg`**: Packages the application for different platforms (Linux, macOS, Windows).
 
