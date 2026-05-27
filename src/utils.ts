@@ -1,7 +1,6 @@
-import {CONSOLE_COLOR, PING_URL} from "./const";
+import {CONSOLE_COLOR} from "./const";
 import kleur from "kleur";
 import {mouse, Point} from "@nut-tree-fork/nut-js";
-import ping from 'ping';
 import {DrawSquareProps} from "./types";
 
 const utils = () => {
@@ -31,7 +30,7 @@ const utils = () => {
 
             for (const point of squarePoints) {
                 await mouse.setPosition(point);
-                await new Promise(resolve => setTimeout(resolve, props.mouseMovementSpeed)); // Delay between movements
+                await new Promise(resolve => setTimeout(resolve, props.mouseMovementSpeed));
             }
         } catch (error) {
             logError(`Error drawing square: ${error}`);
@@ -55,21 +54,28 @@ const utils = () => {
     };
 
 
-    const getUniqueColor = (): (text: string) => string => {
+    const getRandomColor = (): (text: string) => string => {
         return CONSOLE_COLOR[Math.floor(Math.random() * CONSOLE_COLOR.length)];
     };
 
-    const getUrlPing = async (ping_url = PING_URL, isLog = true) => {
-        const randomUrl = ping_url[Math.floor(Math.random() * ping_url.length)];
+    const getUrlPing = async (urls: string[], onStatusChange?: (isAlive: boolean) => void) => {
+        const randomUrl = urls[Math.floor(Math.random() * urls.length)];
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
         try {
-            const result = await ping.promise.probe(randomUrl);
-            if (result.alive && isLog) {
-                console.log(getUniqueColor()(`\nPing to ${randomUrl} successful: ${result.time} ms`));
-            } else {
-                logError(`\nPing to ${randomUrl} failed.`);
-            }
+            const response = await fetch(`https://${randomUrl}`, {
+                method: 'HEAD',
+                signal: controller.signal,
+            });
+            clearTimeout(timeoutId);
+            const isAlive = response.ok;
+            onStatusChange?.(isAlive);
+            return isAlive;
         } catch (error) {
-            logError(`Error pinging URL: ${error}`);
+            clearTimeout(timeoutId);
+            onStatusChange?.(false);
+            return false;
         }
     };
 
@@ -77,7 +83,7 @@ const utils = () => {
         drawSquare,
         formatTime,
         formatDate,
-        getUniqueColor,
+        getRandomColor,
         getUrlPing,
         logError,
     };

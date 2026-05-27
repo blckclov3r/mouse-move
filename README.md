@@ -33,17 +33,7 @@ educational purposes.
 
 - **`npm run start`**: Builds the TypeScript files and runs the application.
 - **`npm run build`**: Compiles TypeScript files into JavaScript.
-- **`npm run pkg`**: Packages the application for different platforms (Linux, macOS, Windows).
-
-## Executables
-
-Pre-built executable files are available for different platforms:
-
-- **[Linux](https://raw.githubusercontent.com/blckclov3r/mouse-move/master/app-linux)**
-- **[macOS](https://raw.githubusercontent.com/blckclov3r/mouse-move/master/app-macos)**
-- **[Windows](https://raw.githubusercontent.com/blckclov3r/mouse-move/master/app-win.exe)**
-
-These files allow you to run the application directly on your platform without needing to build it yourself.
+- **`npm run pkg`**: Packages the application for different platforms (macOS, Windows).
 
 ## Usage
 

@@ -1,4 +1,4 @@
-import {DEFAULT_TEXT, MOUSE_CHECK_INTERVAL, MOUSE_MOVEMENT_SPEED, PING_URL, SMALL_SQUARE,} from './const';
+import {DEFAULT_TEXT, MOUSE_CHECK_INTERVAL, MOUSE_MOVEMENT_SPEED, PING_URL, SMALL_SQUARE} from './const';
 import utils from "./utils";
 import {StartMovementProps} from "./types";
 import {mouse} from "@nut-tree-fork/nut-js";
@@ -7,7 +7,7 @@ const startMovement = async (props: StartMovementProps) => {
     const {
         formatTime,
         formatDate,
-        getUniqueColor,
+        getRandomColor,
         drawSquare,
         getUrlPing,
         logError,
@@ -19,6 +19,9 @@ const startMovement = async (props: StartMovementProps) => {
     let previousMouseX = 0;
     let previousMouseY = 0;
     let isStarted = false;
+    let intervalId: NodeJS.Timeout | null = null;
+    let isProcessing = false;
+    let lastPingSuccess = true;
 
     const initializePosition = async () => {
         try {
@@ -32,32 +35,65 @@ const startMovement = async (props: StartMovementProps) => {
     await initializePosition();
 
     const checkMousePosition = async () => {
+        if (isProcessing) return;
+        isProcessing = true;
+
         try {
             const position = await mouse.getPosition();
             if (previousMouseX === position.x && previousMouseY === position.y && isStarted) {
+                console.log(getRandomColor()(`\n🔁 Idle for ${props.mouseCheckInterval / 1000}s – moving mouse...`));
+
                 await drawSquare({
                     size: props.size,
                     mouseMovementSpeed: props.mouseMovementSpeed,
+                    startPosition: position,
                 });
-                await getUrlPing(props.pingUrl);
+
+                await getUrlPing(props.pingUrl, (isAlive: boolean) => {
+                    if (isAlive !== lastPingSuccess) {
+                        lastPingSuccess = isAlive;
+                        if (isAlive) {
+                            console.log(getRandomColor()(`✅ Connection restored`));
+                        } else {
+                            logError(`❌ Connection lost`);
+                        }
+                    }
+                });
+
             } else {
+                if (!isStarted) {
+                    console.log(getRandomColor()(`🖱️ Mouse moved – idle detection activated`));
+                }
                 isStarted = true;
-                await initializePosition();
+                previousMouseX = position.x;
+                previousMouseY = position.y;
             }
         } catch (error) {
-            console.error(`Error checking mouse position: ${error}`);
+            logError(`Error checking mouse position: ${error}`);
+        } finally {
+            isProcessing = false;
         }
     };
 
-    setInterval(checkMousePosition, props.mouseCheckInterval);
+    intervalId = setInterval(checkMousePosition, props.mouseCheckInterval);
 
-    console.log(getUniqueColor()(DEFAULT_TEXT));
-    console.log(getUniqueColor()(`Start Date: ${startDate}`));
-    console.log(getUniqueColor()(`Start Time: ${startTime}`));
-    console.log(getUniqueColor()(`linkedIn: @blckclov3r`));
-    console.log(getUniqueColor()(`github: @blckclov3r`));
+    const shutdown = () => {
+        console.log(getRandomColor()("\n🛑 Received shutdown signal. Exiting gracefully..."));
+        if (intervalId) clearInterval(intervalId);
+        process.exit(0);
+    };
+    process.on("SIGINT", shutdown);
+    process.on("SIGTERM", shutdown);
 
-    await getUrlPing(props.pingUrl);
+    console.log(getRandomColor()(DEFAULT_TEXT));
+    console.log(getRandomColor()(`Start Date: ${startDate}`));
+    console.log(getRandomColor()(`Start Time: ${startTime}`));
+    console.log(getRandomColor()(`linkedIn: @blckclov3r`));
+    console.log(getRandomColor()(`github: @blckclov3r`));
+
+    await getUrlPing(props.pingUrl, (isAlive) => {
+        lastPingSuccess = isAlive;
+    });
 };
 
 startMovement({

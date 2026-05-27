@@ -4,21 +4,28 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "pkg": "npx pkg dist/index.js --targets node18-linux-x64,node18-win-x64,node18-macos-x64 --output app",
+    "pkg": "npx pkg dist/index.js --targets node18-win-x64,node18-macos-x64 --output app",
     "start": "npm run build && node dist/index.js",
-    "prepare": "npm run start"
+    "prepare": "npm run build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "Prevents system sleep by moving mouse when idle and checking connectivity",
   "devDependencies": {
-    "@types/ping": "^0.4.4",
-    "typescript": "^5.5.4"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@nut-tree-fork/nut-js": "^4.2.2",
-    "kleur": "^4.1.5",
-    "ping": "^0.4.4"
+    "kleur": "^4.1.5"
+  },
+  "pkg": {
+    "assets": [
+      "node_modules/@nut-tree-fork/nut-js/**/*"
+    ],
+    "targets": [
+      "node22-win-x64",
+      "node22-macos-x64"
+    ]
   }
 }
