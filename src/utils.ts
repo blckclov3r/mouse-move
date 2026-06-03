@@ -17,22 +17,40 @@ const utils = () => {
         }
     };
 
-    const drawSquare = async (props: DrawSquareProps): Promise<void> => {
+    const drawSquare = async (props: DrawSquareProps, signal?: AbortSignal): Promise<void> => {
         try {
             const {x: startX, y: startY} = await getMousePosition();
+
+            // Build the path only once
             const squarePoints: Point[] = [
                 new Point(startX, startY),
                 new Point(startX + props.size, startY),
                 new Point(startX + props.size, startY + props.size),
                 new Point(startX, startY + props.size),
-                new Point(startX, startY)
+                new Point(startX, startY),
             ];
 
             for (const point of squarePoints) {
+                // Check for cancellation before each move
+                if (signal?.aborted) {
+                    throw new DOMException('Square drawing aborted', 'AbortError');
+                }
+
                 await mouse.setPosition(point);
-                await new Promise(resolve => setTimeout(resolve, props.mouseMovementSpeed));
+                await new Promise<void>((resolve, reject) => {
+                    const timer = setTimeout(resolve, props.mouseMovementSpeed);
+                    // If an abort signal is provided, cancel the delay when aborted
+                    signal?.addEventListener('abort', () => {
+                        clearTimeout(timer);
+                        reject(new DOMException('Delay aborted', 'AbortError'));
+                    }, {once: true});
+                });
             }
         } catch (error) {
+            if (error instanceof DOMException && error.name === 'AbortError') {
+                // Expected cancellation – silently stop
+                return;
+            }
             logError(`Error drawing square: ${error}`);
         }
     };
@@ -53,12 +71,14 @@ const utils = () => {
         return `${year}-${month}-${day}`;
     };
 
-
     const getRandomColor = (): (text: string) => string => {
         return CONSOLE_COLOR[Math.floor(Math.random() * CONSOLE_COLOR.length)];
     };
-
-    const getUrlPing = async (urls: string[], onStatusChange?: (isAlive: boolean) => void) => {
+    
+    const getUrlPing = async (
+        urls: string[],
+        onStatusChange?: (isAlive: boolean) => void,
+    ): Promise<boolean> => {
         const randomUrl = urls[Math.floor(Math.random() * urls.length)];
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000);
@@ -68,14 +88,17 @@ const utils = () => {
                 method: 'HEAD',
                 signal: controller.signal,
             });
-            clearTimeout(timeoutId);
             const isAlive = response.ok;
             onStatusChange?.(isAlive);
             return isAlive;
         } catch (error) {
-            clearTimeout(timeoutId);
             onStatusChange?.(false);
             return false;
+        } finally {
+            // Always clear the timeout, even on success
+            clearTimeout(timeoutId);
+            // Explicitly drop the callback reference after call
+            onStatusChange = undefined;
         }
     };
 
