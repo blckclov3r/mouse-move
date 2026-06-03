@@ -75,7 +75,7 @@ const startMovement = async (props: StartMovementProps) => {
                     mouseMovementSpeed: props.mouseMovementSpeed,
                     startPosition: position,
                 });
-                const pingPromise = new Promise<void>((resolve, reject) => {
+                const pingPromise = new Promise<void>((resolve, _) => {
                     getUrlPing(props.pingUrl, (isAlive: boolean) => {
                         if (isAlive !== lastPingSuccess) {
                             lastPingSuccess = isAlive;

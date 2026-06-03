@@ -1,5 +1,5 @@
 import {CONSOLE_COLOR} from "./const";
-import kleur from "kleur";
+import * as kleur from "kleur"; // ← fixed import
 import {mouse, Point} from "@nut-tree-fork/nut-js";
 import {DrawSquareProps} from "./types";
 
@@ -17,12 +17,14 @@ const utils = () => {
         }
     };
 
-    const drawSquare = async (props: DrawSquareProps, signal?: AbortSignal): Promise<void> => {
+    // drawSquare with optional AbortSignal (allows clean cancellation)
+    const drawSquare = async (
+        props: DrawSquareProps,
+        signal?: AbortSignal
+    ): Promise<void> => {
         try {
             const {x: startX, y: startY} = await getMousePosition();
-
-            // Build the path only once
-            const squarePoints: Point[] = [
+            const points: Point[] = [
                 new Point(startX, startY),
                 new Point(startX + props.size, startY),
                 new Point(startX + props.size, startY + props.size),
@@ -30,31 +32,24 @@ const utils = () => {
                 new Point(startX, startY),
             ];
 
-            for (const point of squarePoints) {
-                // Check for cancellation before each move
-                if (signal?.aborted) {
-                    throw new DOMException('Square drawing aborted', 'AbortError');
-                }
-
+            for (const point of points) {
+                if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
                 await mouse.setPosition(point);
                 await new Promise<void>((resolve, reject) => {
                     const timer = setTimeout(resolve, props.mouseMovementSpeed);
-                    // If an abort signal is provided, cancel the delay when aborted
                     signal?.addEventListener('abort', () => {
                         clearTimeout(timer);
-                        reject(new DOMException('Delay aborted', 'AbortError'));
+                        reject(new DOMException('Aborted', 'AbortError'));
                     }, {once: true});
                 });
             }
         } catch (error) {
-            if (error instanceof DOMException && error.name === 'AbortError') {
-                // Expected cancellation – silently stop
-                return;
-            }
+            if (error instanceof DOMException && error.name === 'AbortError') return;
             logError(`Error drawing square: ${error}`);
         }
     };
 
+    // Pure helpers
     const formatTime = (date: Date): string => {
         const hours = date.getHours();
         const minutes = date.getMinutes().toString().padStart(2, '0');
@@ -71,35 +66,44 @@ const utils = () => {
         return `${year}-${month}-${day}`;
     };
 
-    const getRandomColor = (): (text: string) => string => {
-        return CONSOLE_COLOR[Math.floor(Math.random() * CONSOLE_COLOR.length)];
-    };
-    
+    const getRandomColor = () =>
+        CONSOLE_COLOR[Math.floor(Math.random() * CONSOLE_COLOR.length)];
+
+    // ------------------------------------------------------------
+    //  Ping with retry – tries up to 3 random URLs before failing
+    // ------------------------------------------------------------
     const getUrlPing = async (
-        urls: string[],
+        urls: readonly string[],
         onStatusChange?: (isAlive: boolean) => void,
     ): Promise<boolean> => {
-        const randomUrl = urls[Math.floor(Math.random() * urls.length)];
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        const maxAttempts = 3;
+        const timeoutMs = 5000;
 
-        try {
-            const response = await fetch(`https://${randomUrl}`, {
-                method: 'HEAD',
-                signal: controller.signal,
-            });
-            const isAlive = response.ok;
-            onStatusChange?.(isAlive);
-            return isAlive;
-        } catch (error) {
-            onStatusChange?.(false);
-            return false;
-        } finally {
-            // Always clear the timeout, even on success
-            clearTimeout(timeoutId);
-            // Explicitly drop the callback reference after call
-            onStatusChange = undefined;
+        for (let i = 0; i < maxAttempts; i++) {
+            const randomUrl = urls[Math.floor(Math.random() * urls.length)];
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+            try {
+                const response = await fetch(`https://${randomUrl}`, {
+                    method: 'GET',          // GET is more widely allowed than HEAD
+                    signal: controller.signal,
+                });
+                clearTimeout(timeoutId);
+                if (response.ok) {
+                    onStatusChange?.(true);
+                    return true;
+                }
+            } catch {
+                // silently try next URL
+            } finally {
+                clearTimeout(timeoutId);
+            }
         }
+
+        // All attempts failed
+        onStatusChange?.(false);
+        return false;
     };
 
     return {
