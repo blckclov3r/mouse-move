@@ -4,6 +4,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
     "pkg": "npx pkg dist/index.js --targets node18-win-x64,node18-macos-x64 --output app",
     "start": "npm run build && node dist/index.js",
     "prepare": "npm run start"
@@ -13,6 +15,9 @@
   "license": "ISC",
   "description": "Prevents system sleep by moving mouse when idle and checking connectivity",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.18.2",
+    "@typescript-eslint/parser": "^8.18.2",
+    "eslint": "^9.17.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {

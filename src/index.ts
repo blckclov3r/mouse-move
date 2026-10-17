@@ -4,7 +4,6 @@ import {StartMovementProps} from "./types";
 import {mouse} from "@nut-tree-fork/nut-js";
 
 const IDLE_OPERATION_TIMEOUT_MS = 10_000;
-
 const startMovement = async (props: StartMovementProps) => {
     const {
         formatTime,
