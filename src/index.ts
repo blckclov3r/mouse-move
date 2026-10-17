@@ -3,6 +3,8 @@ import utils from "./utils";
 import {StartMovementProps} from "./types";
 import {mouse} from "@nut-tree-fork/nut-js";
 
+const IDLE_OPERATION_TIMEOUT_MS = 10_000;
+
 const startMovement = async (props: StartMovementProps) => {
     const {
         formatTime,
@@ -11,6 +13,9 @@ const startMovement = async (props: StartMovementProps) => {
         drawSquare,
         getUrlPing,
         logError,
+        setStatus,
+        clearStatus,
+        logEvent,
     } = utils();
 
     const startTime = formatTime(new Date());
@@ -19,21 +24,49 @@ const startMovement = async (props: StartMovementProps) => {
     let previousMouseX = 0;
     let previousMouseY = 0;
     let isStarted = false;
-    let intervalId: NodeJS.Timeout | null = null;
     let isProcessing = false;
+    let isStopping = false;
+    let intervalId: NodeJS.Timeout | null = null;
     let lastPingSuccess = true;
+    let lastStatusMessage = "";
+    const shutdownController = new AbortController();
+
+    const status = (message: string) => {
+        if (message === lastStatusMessage) return;
+        lastStatusMessage = message;
+        setStatus(message+`\n`);
+    };
+
+    const updatePingState = (isAlive: boolean) => {
+        if (isAlive === lastPingSuccess) return;
+
+        lastPingSuccess = isAlive;
+        if (isAlive) {
+            status("Connection restored");
+            logEvent("Connection restored");
+        } else {
+            status("Connection lost");
+            logError("Connection lost");
+        }
+    };
 
     const cleanup = () => {
         if (intervalId) {
             clearInterval(intervalId);
             intervalId = null;
         }
-        // Remove listeners so they don't pile up
+
+        shutdownController.abort();
+        clearStatus();
         process.removeListener("SIGINT", shutdown);
         process.removeListener("SIGTERM", shutdown);
     };
 
     const shutdown = () => {
+        if (isStopping) return;
+
+        isStopping = true;
+        status("Shutting down");
         console.log(getRandomColor()("\n🛑 Received shutdown signal. Exiting gracefully..."));
         cleanup();
         process.exit(0);
@@ -44,73 +77,78 @@ const startMovement = async (props: StartMovementProps) => {
 
     const initializePosition = async () => {
         try {
+            if (isStopping) return;
             const position = await mouse.getPosition();
             previousMouseX = position.x;
             previousMouseY = position.y;
+            status("Tracking mouse idle state");
         } catch (error) {
             logError(`Error initializing mouse position: ${error}`);
         }
     };
-    await initializePosition();
+
+    const handleIdleState = async (position: { x: number; y: number }) => {
+        status("Idle detected, moving mouse");
+
+        const operationController = new AbortController();
+        const drawTask = drawSquare({
+            size: props.size,
+            mouseMovementSpeed: props.mouseMovementSpeed,
+            startPosition: position,
+        }, operationController.signal);
+
+        const pingTask = getUrlPing(
+            props.pingUrl,
+            updatePingState,
+            shutdownController.signal,
+        ).then(() => undefined);
+
+        const timeoutTask = new Promise<never>((_, reject) => {
+            const timer = setTimeout(() => {
+                operationController.abort();
+                reject(new Error("Operation timed out"));
+            }, IDLE_OPERATION_TIMEOUT_MS);
+
+            shutdownController.signal.addEventListener("abort", () => clearTimeout(timer), {once: true});
+        });
+
+        await Promise.race([drawTask, pingTask, timeoutTask]);
+        status("Monitoring mouse activity");
+    };
 
     const checkMousePosition = async () => {
-        if (isProcessing) return;
+        if (isStopping || isProcessing) return;
         isProcessing = true;
 
         try {
             const position = await mouse.getPosition();
-            if (
-                previousMouseX === position.x &&
-                previousMouseY === position.y &&
-                isStarted
-            ) {
-                console.log(
-                    getRandomColor()(
-                        `\n🔁 Idle for ${props.mouseCheckInterval / 1000}s – moving mouse...`
-                    )
-                );
+            const idleDetected = isStarted && previousMouseX === position.x && previousMouseY === position.y;
 
-                const drawPromise = drawSquare({
-                    size: props.size,
-                    mouseMovementSpeed: props.mouseMovementSpeed,
-                    startPosition: position,
-                });
-                const pingPromise = new Promise<void>((resolve, _) => {
-                    getUrlPing(props.pingUrl, (isAlive: boolean) => {
-                        if (isAlive !== lastPingSuccess) {
-                            lastPingSuccess = isAlive;
-                            if (isAlive) {
-                                console.log(getRandomColor()(`✅ Connection restored`));
-                            } else {
-                                logError(`❌ Connection lost`);
-                            }
-                        }
-                        resolve();
-                    });
-                });
-
-                const timeout = new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error("Operation timed out")), 10000)
-                );
-
-                await Promise.race([drawPromise, pingPromise, timeout]);
-            } else {
-                if (!isStarted) {
-                    console.log(getRandomColor()(`🖱️ Mouse moved – idle detection activated`));
-                }
-                isStarted = true;
-                previousMouseX = position.x;
-                previousMouseY = position.y;
+            if (idleDetected) {
+                await handleIdleState(position);
+                return;
             }
+
+            if (!isStarted) {
+                status("Mouse active, idle detection enabled");
+            }
+
+            isStarted = true;
+            previousMouseX = position.x;
+            previousMouseY = position.y;
         } catch (error) {
-            logError(`Error checking mouse position: ${error}`);
+            if (!isStopping) {
+                logError(`Error checking mouse position: ${error}`);
+            }
         } finally {
-            isProcessing = false;
+            if (!isStopping) {
+                isProcessing = false;
+            }
         }
     };
 
+    await initializePosition();
     intervalId = setInterval(checkMousePosition, props.mouseCheckInterval);
-
 
     console.log(getRandomColor()(DEFAULT_TEXT));
     console.log(getRandomColor()(`Start Date: ${startDate}`));
@@ -118,9 +156,11 @@ const startMovement = async (props: StartMovementProps) => {
     console.log(getRandomColor()(`linkedIn: @blckclov3r`));
     console.log(getRandomColor()(`github: @blckclov3r`));
 
+    status("Checking connectivity");
     await getUrlPing(props.pingUrl, (isAlive) => {
         lastPingSuccess = isAlive;
-    });
+        status(isAlive ? "Network healthy" : "Network unavailable");
+    }, shutdownController.signal).catch(() => undefined);
 };
 
 startMovement({
