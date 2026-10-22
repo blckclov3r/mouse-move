@@ -11,8 +11,10 @@ export const DEFAULT_TEXT = `
 `.trimStart();
 
 // ----- Environment Helpers (with simple cache) -----
-const envIntCache = new Map<string, number>();
-function getIntEnv(key: string, defaultValue: number): number {
+type IntEnvKey = "MOUSE_SQUARE_SIZE" | "MOUSE_MOVEMENT_SPEED" | "MOUSE_CHECK_INTERVAL";
+
+const envIntCache = new Map<IntEnvKey, number>();
+function getIntEnv(key: IntEnvKey, defaultValue: number): number {
     if (envIntCache.has(key)) return envIntCache.get(key)!;
     const raw = process.env[key];
     const parsed = raw === undefined ? NaN : parseInt(raw, 10);
@@ -35,8 +37,8 @@ export const CONSOLE_COLOR = Object.freeze([
     kleur.magenta,
 ]);
 
-// ----- Ping URLs (immutable + helper) -----
-export const PING_URL = Object.freeze([
+// ----- Connectivity checks (immutable) -----
+export const CONNECTIVITY_URLS = Object.freeze([
     'microsoft.com',
     'google.com',
     'bing.com',
@@ -48,6 +50,3 @@ export const PING_URL = Object.freeze([
     'office.com',
     'azure.com',
 ]);
-
-export const getRandomPingUrl = (): string =>
-    PING_URL[Math.floor(Math.random() * PING_URL.length)];
