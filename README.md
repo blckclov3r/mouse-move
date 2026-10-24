@@ -4,9 +4,9 @@
 
 # Mouse Move
 
-**Keep your status active. Stay <span style="color: #39FF14">available</span>.**
+**Keep your status active. Stay available.**
 
-> A lightweight TypeScript utility that watches your pointer and nudges it in a small square whenever you go idle, giving collaboration apps a reason to keep you **Available**.
+A lightweight TypeScript utility that watches your pointer and nudges it in a small square whenever you go idle, giving collaboration apps a reason to keep you **Available**.
 
 [![CI](https://img.shields.io/github/actions/workflow/status/blckclov3r/mouse-move/ci.yml?branch=master&label=CI&logo=githubactions&logoColor=white&style=flat-square)](https://github.com/blckclov3r/mouse-move/actions/workflows/ci.yml)
 [![Node.js](https://img.shields.io/badge/node-%E2%89%A522-339933?logo=node.js&logoColor=white&style=flat-square)](https://nodejs.org/)
@@ -31,11 +31,10 @@ Works alongside:
 ---
 
 ## 🧭 Table of Contents
-
-- [Why Mouse Move?](#-why-mouse-move)
-- [Features](#-features)
 - [Requirements](#-requirements)
 - [Quick Start](#-quick-start)
+- [Why Mouse Move?](#-why-mouse-move)
+- [Features](#-features)
 - [How It Works](#-how-it-works)
 - [Configuration](#-configuration)
 - [Scripts](#-scripts)
@@ -48,18 +47,30 @@ Works alongside:
 - [Disclaimer](#-disclaimer)
 - [License](#-license)
 
+## 📋 Requirements
+
+- **Node.js 22 or newer** (`engines.node` is `>=22`)
+
+
+## 🚀 Quick Start
+
+```sh
+# 1. Clone
+git clone https://github.com/blckclov3r/mouse-move.git
+cd mouse-move
+
+# 2. Install (scripts disabled on purpose — see the note below)
+npm install
+
+# 3. Build and run
+npm start
+```
+
+Stop the app with `Ctrl+C`. The status line clears itself and the process exits with code `0`.
+
 ## 💡 Why Mouse Move?
 
 Collaboration tools often switch your presence to **Away** after a period of mouse or keyboard inactivity. Mouse Move polls the pointer, and when it has not moved between two checks, it traces a tiny square (5 px by default) back to where it started. The nudge is small enough to stay out of your way and large enough to register as real input.
-
-**At a glance**
-
-| Setting | Default |
-| --- | --- |
-| ⏱️ Check interval | every 15 seconds (configurable) |
-| ⬜ Movement | a 5 px square, 5 cursor points (~140 ms) |
-| 🌐 Connectivity | random domain probe, 3 attempts × 5 s |
-| 🛑 Safety bound | idle operation aborts after 10 seconds |
 
 ## ✨ Features
 
@@ -74,34 +85,6 @@ Collaboration tools often switch your presence to **Away** after a period of mou
 | 🔒 **Graceful shutdown** | `SIGINT` / `SIGTERM` stop the interval, abort in-flight work, and exit cleanly. |
 | 📦 **Packaging script** | Produces standalone Windows and macOS executables with `pkg`. |
 
-## 📋 Requirements
-
-- **Node.js 22 or newer** (`engines.node` is `>=22`)
-- **npm** with the committed `package-lock.json`
-- A desktop session with permission to inject pointer input:
-  - **macOS** — Accessibility permission for your terminal
-  - **Linux** — X11 session; Wayland may block input injection
-  - **Windows** — no extra setup
-- **Headless environments are not supported** — the native mouse adapter needs a real display.
-
-## 🚀 Quick Start
-
-```sh
-# 1. Clone
-git clone https://github.com/blckclov3r/mouse-move.git
-cd mouse-move
-
-# 2. Install (scripts disabled on purpose — see the note below)
-npm install --ignore-scripts
-
-# 3. Build and run
-npm start
-```
-
-Stop the app with `Ctrl+C`. The status line clears itself and the process exits with code `0`.
-
-> [!IMPORTANT]
-> Always install with `--ignore-scripts`. The `prepare` script runs `npm run start`, so a plain `npm install` or `npm ci` builds the project and launches the endlessly running mouse mover. CI uses `npm ci --ignore-scripts` for the same reason.
 
 ### What it looks like
 
@@ -122,7 +105,7 @@ mouse-move 09:41:37 Idle detected, moving mouse
 ```
 
 > [!TIP]
-> The live status line is written in place (`\r`) and only appears when stdout is a real terminal and `CI` is unset. Redirected output and CI logs contain just the banner plus `INFO` / `ERROR` lines.
+> The live status line is written in place and only appears when stdout is a real terminal and `CI` is unset. Redirected output and CI logs contain just the banner plus `INFO` / `ERROR` lines.
 
 ## 🔍 How It Works
 
