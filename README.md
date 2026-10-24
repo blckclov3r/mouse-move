@@ -4,9 +4,9 @@
 
 # Mouse Move
 
-**Keep your status active. Stay available.**
+**Keep your status active. Stay <span style="color: #39FF14">available</span>.**
 
-A lightweight TypeScript utility that watches your pointer and nudges it in a small square whenever you go idle, giving collaboration apps a reason to keep you **Available**.
+> A lightweight TypeScript utility that watches your pointer and nudges it in a small square whenever you go idle, giving collaboration apps a reason to keep you **Available**.
 
 [![CI](https://img.shields.io/github/actions/workflow/status/blckclov3r/mouse-move/ci.yml?branch=master&label=CI&logo=githubactions&logoColor=white&style=flat-square)](https://github.com/blckclov3r/mouse-move/actions/workflows/ci.yml)
 [![Node.js](https://img.shields.io/badge/node-%E2%89%A522-339933?logo=node.js&logoColor=white&style=flat-square)](https://nodejs.org/)
@@ -15,12 +15,18 @@ A lightweight TypeScript utility that watches your pointer and nudges it in a sm
 [![Platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20macOS%20%7C%20Linux-4B5563?style=flat-square)](#-requirements)
 [![Stars](https://img.shields.io/github/stars/blckclov3r/mouse-move?logo=github&style=flat-square)](https://github.com/blckclov3r/mouse-move/stargazers)
 
-Works alongside **Microsoft Teams** · **Slack** · **Discord** · **Zoom** · **Google Chat**
+Works alongside:
+
+[![Microsoft Teams](https://img.shields.io/badge/Microsoft%20Teams-6264A7?logo=microsoftteams&logoColor=white)](https://www.microsoft.com/microsoft-teams)
+[![Slack](https://img.shields.io/badge/Slack-4A154B?logo=slack&logoColor=white)](https://slack.com)
+[![Zoom](https://img.shields.io/badge/Zoom-0B5CFF?logo=zoom&logoColor=white)](https://zoom.us)
+[![Google Chat](https://img.shields.io/badge/Google%20Chat-34A853?logo=googlechat&logoColor=white)](https://chat.google.com)
+[![Discord](https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white)](https://discord.com)
+[![Mattermost](https://img.shields.io/badge/Mattermost-0058CC?logo=mattermost&logoColor=white)](https://mattermost.com)
+[![Rocket.Chat](https://img.shields.io/badge/Rocket.Chat-F5455C?logo=rocketdotchat&logoColor=white)](https://www.rocket.chat)
 
 </div>
 
-> [!NOTE]
-> Mouse Move only generates pointer input. Whether you appear "Available" is decided by each application and your organization's policy — see the [disclaimer](#-disclaimer).
 
 ---
 
